@@ -14,4 +14,3 @@ Task.prototype.due = function() {
 		return null
 	return new Date(data[1] | 0, data[2] - 1, data[3] | 0)
 }
-

@@ -1,6 +1,167 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<title>Simple Todo List</title>
 		<script src="todo.js"></script>
+		<style>
+body, #addtext {
+	font-family: sans-serif;
+	font-size: 16px;
+	margin: 0; padding: 0;
+}
+#add {
+	display: flex;
+	padding: 8px 16px;
+}
+#addtext {
+	flex-grow: 1;
+	border:0;
+	outline: 0;
+	margin-right: 8px;
+}
+#addtext:focus {
+	border-bottom: 2px solid #AAA;
+}
+
+#tasks {
+	margin: 8px 0 0 0;
+}
+
+.task {
+	padding: 8px 16px;
+}
+.task button {
+	float: right;
+}
+.task-project, .task-context, .task-metadata, .task-due {
+	text-decoration: none;
+}
+.task-project {
+	color: #2196f3;
+}
+.task-context {
+	color: green;
+}
+.task-metadata {
+	color: orange;
+}
+.task-due {
+	color: red;
+}
+
+button {
+	border-radius: 16px;
+	border: 0;
+	background: #aaa;
+	color: #fff;
+	cursor: pointer;
+	width: 16px;
+	height: 16px;
+	text-align: center;
+	padding: 0;
+	font-size: 14px;
+}
+
+main {
+	margin: 0 64px;
+}
+@media (max-width: 600px) {
+	main {
+		margin: 0 16px;		
+	}
+}
+		</style>
 	</head>
+	<body>
+		<main>
+			<div id="tasks">
+				
+			</div>
+			<div id="add">
+				<input type="text" id="addtext" placeholder="New task..." />
+				<button id="addbutton">+</button>
+			</div>
+		</main>
+
+		<script>
+function loadTasks() {
+	var tasks = localStorage.getItem("tasks")
+	if (tasks == null || tasks.length == 0) {
+		return []
+	}
+	return tasks.split("\n")
+}
+
+function createTaskElement(task) {
+	var out = document.createElement("div")
+	out.classList.add("task")
+	
+	var text = document.createElement("span")
+	text.innerHTML = task.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").
+		replace(/(\+[\w\d]+)/g, '<a href="?$1" class="task-project">$1</a>').
+		replace(/(\@[\w\d]+)/g, '<a href="?$1" class="task-context">$1</a>').
+		replace(/(due\:\d{4}-\d{2}-\d{2})/g, '<a href="?$1" class="task-due">$1</a>').
+		replace(/([\w\d]+:[\w\d\-]+(?!\w|\d|\-|<|\"))/g, '<a href="?$1" class="task-metadata">$1</a>')
+	out.appendChild(text)
+
+	var delButton = document.createElement("button")
+	delButton.innerHTML = "&times;"
+	delButton.onclick = function() {
+		deleteTask(out)
+	}
+	out.appendChild(delButton)
+
+	return out
+}
+
+function addTask(string) {
+	if(string == "")
+		return;
+
+	var node = createTaskElement(string)
+	document.getElementById("tasks").appendChild(node)
+
+	saveTasks()
+}
+
+function deleteTask(node) {
+	node.remove()
+
+	saveTasks()
+}
+
+function saveTasks() {
+	var nodes = document.getElementById("tasks").children
+	var out = ""
+	for (var i = 0; i < nodes.length; i++) {
+		out += nodes[i].querySelector("span").innerText
+		out += "\n"
+	}
+	out = out.slice(0, -1)
+	localStorage.setItem("tasks", out)
+}
+
+function download() {
+	var uri = "data:text/plain," + encodeURI(loadTasks().join("\n"))
+	console.log(uri)
+}
+
+loadTasks().forEach(function(task) {
+	addTask(task)		
+})
+
+document.getElementById("addbutton").onclick = function() {
+	var text = document.getElementById("addtext")
+	addTask(text.value)
+	text.value = ""
+}
+
+var addtext = document.getElementById("addtext");
+addtext.onkeypress = function(e) {
+	if(e.keyCode == 13 || e.which == 13)
+		document.getElementById("addbutton").click()
+}
+addtext.focus();
+		</script>
+	</body>
 </html>
