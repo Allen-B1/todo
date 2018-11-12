@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Simple Todo List</title>
+		<title>Todo List</title>
 		<script src="todo.js"></script>
 		<style>
 body, #addtext {
@@ -49,7 +49,7 @@ body, #addtext {
 	color: red;
 }
 
-button {
+button.circle {
 	border-radius: 16px;
 	border: 0;
 	background: #aaa;
@@ -65,21 +65,34 @@ button {
 main {
 	margin: 0 64px;
 }
+#toolbar {
+	padding: 16px 80px;
+	background: #2196f3;
+	color: #FFF;
+}
 @media (max-width: 600px) {
 	main {
 		margin: 0 16px;		
 	}
+	#toolbar {
+		padding: 32px;
+	}
 }
+
 		</style>
 	</head>
 	<body>
+		<div id="toolbar">
+			Todo
+			<button class="circle" style="float:right" onclick="download()">&#x2B73;</button>
+		</div>
 		<main>
 			<div id="tasks">
 				
 			</div>
 			<div id="add">
 				<input type="text" id="addtext" placeholder="New task..." />
-				<button id="addbutton">+</button>
+				<button id="addbutton" class="circle">+</button>
 			</div>
 		</main>
 
@@ -109,6 +122,7 @@ function createTaskElement(task) {
 	delButton.onclick = function() {
 		deleteTask(out)
 	}
+	delButton.classList.add("circle")
 	out.appendChild(delButton)
 
 	return out
@@ -143,7 +157,12 @@ function saveTasks() {
 
 function download() {
 	var uri = "data:text/plain," + encodeURI(loadTasks().join("\n"))
-	console.log(uri)
+	var a = document.createElement("a")
+	a.href = uri
+	a.setAttribute("download", "todo.txt")
+	document.body.appendChild(a)
+	a.click()
+	a.remove()
 }
 
 loadTasks().forEach(function(task) {
