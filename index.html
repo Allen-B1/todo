@@ -3,12 +3,14 @@
 <html>
 	<head>
 		<title>Todo List</title>
+		<meta name="theme-color" content="#4CAF50">
 		<script src="todo.js"></script>
 		<style>
 body, #addtext {
 	font-family: sans-serif;
 	font-size: 16px;
 	margin: 0; padding: 0;
+	background: #FAFAFA;
 }
 #add {
 	display: flex;
@@ -36,18 +38,10 @@ body, #addtext {
 .task-project, .task-context, .task-metadata, .task-due {
 	text-decoration: none;
 }
-.task-project {
-	color: #2196f3;
-}
-.task-context {
-	color: green;
-}
-.task-metadata {
-	color: orange;
-}
-.task-due {
-	color: red;
-}
+.task-project { color: #ffa000; }
+.task-context { color: #388e3c; }
+.task-metadata { color: #ff5722; }
+.task-due { color: #f44336; }
 
 .circle {
 	border-radius: 16px;
@@ -67,7 +61,7 @@ main {
 }
 #toolbar {
 	padding: 16px 80px;
-	background: #2196f3;
+	background: #4CAF50;
 	color: #FFF;
 }
 #toolbar a {
