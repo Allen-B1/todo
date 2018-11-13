@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 	<head>
@@ -11,7 +12,7 @@ body, #addtext {
 }
 #add {
 	display: flex;
-	padding: 8px 16px;
+	padding: 8px 0;
 }
 #addtext {
 	flex-grow: 1;
@@ -24,11 +25,10 @@ body, #addtext {
 }
 
 #tasks {
-	margin: 8px 0 0 0;
+	margin-top: 8px;
 }
-
 .task {
-	padding: 8px 16px;
+	padding: 8px 0;
 }
 .task button {
 	float: right;
@@ -63,11 +63,15 @@ button.circle {
 }
 
 main {
-	margin: 0 64px;
+	margin: 0 80px;
 }
 #toolbar {
 	padding: 16px 80px;
 	background: #2196f3;
+	color: #FFF;
+}
+#toolbar a {
+	text-decoration: none;
 	color: #FFF;
 }
 @media (max-width: 600px) {
@@ -75,18 +79,25 @@ main {
 		margin: 0 16px;		
 	}
 	#toolbar {
-		padding: 32px;
+		padding: 16px;
 	}
+}
+
+#filter {
+	margin: 16px 0 8px 0;
+	font-size: 14px;
+	font-weight: bold;
 }
 
 		</style>
 	</head>
 	<body>
 		<div id="toolbar">
-			Todo
+			<a href="?">Todo</a>
 			<button class="circle" style="float:right" onclick="download()">&#x2B73;</button>
 		</div>
 		<main>
+			<p id="filter" style="display:none"></p>
 			<div id="tasks">
 				
 			</div>
@@ -136,6 +147,8 @@ function addTask(string) {
 	document.getElementById("tasks").appendChild(node)
 
 	saveTasks()
+
+	return node
 }
 
 function deleteTask(node) {
@@ -166,8 +179,13 @@ function download() {
 }
 
 loadTasks().forEach(function(task) {
-	addTask(task)		
+	addTask(task).style.display = task.indexOf(location.search.slice(1)) !== -1 ? "block": "none"
 })
+if(location.search.length > 1) {
+	var filtertext = document.getElementById("filter")	
+	filtertext.appendChild(document.createTextNode("Filter: " + location.search.slice(1)))
+	filtertext.style.display = "block"
+}
 
 document.getElementById("addbutton").onclick = function() {
 	var text = document.getElementById("addtext")
