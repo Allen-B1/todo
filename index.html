@@ -146,9 +146,11 @@ function addTask(string) {
 	var node = createTaskElement(string)
 	document.getElementById("tasks").appendChild(node)
 
-	saveTasks()
+	if(string.indexOf(location.search.slice(1)) === -1) {
+		node.style.display = "none";
+	}
 
-	return node
+	saveTasks()
 }
 
 function deleteTask(node) {
@@ -179,7 +181,7 @@ function download() {
 }
 
 loadTasks().forEach(function(task) {
-	addTask(task).style.display = task.indexOf(location.search.slice(1)) !== -1 ? "block": "none"
+	addTask(task)
 })
 if(location.search.length > 1) {
 	var filtertext = document.getElementById("filter")	
