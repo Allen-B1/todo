@@ -49,7 +49,7 @@ body, #addtext {
 	color: red;
 }
 
-button.circle {
+.circle {
 	border-radius: 16px;
 	border: 0;
 	background: #aaa;
@@ -94,7 +94,7 @@ main {
 	<body>
 		<div id="toolbar">
 			<a href="?">Todo</a>
-			<button class="circle" style="float:right" onclick="download()">&#x2B73;</button>
+			<a class="circle" style="float:right" download="todo.txt" id="download">&#x2B73;</a>
 		</div>
 		<main>
 			<p id="filter" style="display:none"></p>
@@ -168,16 +168,9 @@ function saveTasks() {
 	}
 	out = out.slice(0, -1)
 	localStorage.setItem("tasks", out)
-}
 
-function download() {
-	var uri = "data:text/plain," + encodeURI(loadTasks().join("\n"))
-	var a = document.createElement("a")
-	a.href = uri
-	a.setAttribute("download", "todo.txt")
-	document.body.appendChild(a)
-	a.click()
-	a.remove()
+	var a = document.getElementById("download")
+	a.href = "data:text/plain," + encodeURI(out)
 }
 
 loadTasks().forEach(function(task) {
