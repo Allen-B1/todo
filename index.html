@@ -103,14 +103,6 @@ main {
 		</main>
 
 		<script>
-function loadTasks() {
-	var tasks = localStorage.getItem("tasks")
-	if (tasks == null || tasks.length == 0) {
-		return []
-	}
-	return tasks.split("\n")
-}
-
 function createTaskElement(task) {
 	var out = document.createElement("div")
 	out.classList.add("task")
@@ -126,55 +118,12 @@ function createTaskElement(task) {
 	var delButton = document.createElement("button")
 	delButton.innerHTML = "&times;"
 	delButton.onclick = function() {
-		deleteTask(out)
+		deleteTask(this.getAttribute('data-index') | 0)
 	}
 	delButton.classList.add("circle")
 	out.appendChild(delButton)
 
 	return out
-}
-
-function addTask(string) {
-	if(string == "")
-		return;
-
-	var node = createTaskElement(string)
-	document.getElementById("tasks").appendChild(node)
-
-	if(string.indexOf(location.search.slice(1)) === -1) {
-		node.style.display = "none";
-	}
-
-	saveTasks()
-}
-
-function deleteTask(node) {
-	node.remove()
-
-	saveTasks()
-}
-
-function saveTasks() {
-	var nodes = document.getElementById("tasks").children
-	var out = ""
-	for (var i = 0; i < nodes.length; i++) {
-		out += nodes[i].querySelector("span").innerText
-		out += "\n"
-	}
-	out = out.slice(0, -1)
-	localStorage.setItem("tasks", out)
-
-	var a = document.getElementById("download")
-	a.href = "data:text/plain," + encodeURI(out)
-}
-
-loadTasks().forEach(function(task) {
-	addTask(task)
-})
-if(location.search.length > 1) {
-	var filtertext = document.getElementById("filter")	
-	filtertext.appendChild(document.createTextNode("Filter: " + location.search.slice(1)))
-	filtertext.style.display = "block"
 }
 
 document.getElementById("addbutton").onclick = function() {
