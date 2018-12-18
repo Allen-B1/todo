@@ -7,7 +7,7 @@
 		<script src="todo.js"></script>
 		<style>
 body, #addtext {
-	font-family: sans-serif;
+	font-family: monospace;
 	font-size: 16px;
 	margin: 0; padding: 0;
 	background: #FAFAFA;
@@ -35,13 +35,25 @@ body, #addtext {
 .task button {
 	float: right;
 }
-.task-project, .task-context, .task-metadata, .task-due {
+.task-project, .task-context, .task-metadata, .task-due, .task-priority {
 	text-decoration: none;
 }
 .task-project { color: #ffa000; }
 .task-context { color: #388e3c; }
 .task-metadata { color: #ff5722; }
 .task-due { color: #f44336; }
+
+.task-priority {
+	font-size: 0;
+	color: #ffc107; }
+	.task-priority-actual {
+		font-size: 16px; }
+	.task-priority-A {
+		color: #f44336; }
+	.task-priority-B {
+		color: #ff9800; }
+	.task-priority-C {
+		color: #ff9800; }
 
 .circle {
 	border-radius: 16px;
@@ -123,6 +135,7 @@ function createTaskElement(id) {
 	var text = document.createElement("span")
 	text.classList.add("task-text")
 	text.innerHTML = list.get(id).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").
+		replace(/\(([A-Z])\)/g, '<span class="task-priority task-priority-$1">(<span class="task-priority-actual">$1</span>)</span>').
 		replace(/(\+[\w\d]+)/g, '<a href="?$1" class="task-project">$1</a>').
 		replace(/(\@[\w\d]+)/g, '<a href="?$1" class="task-context">$1</a>').
 		replace(/(due\:\d{4}-\d{2}-\d{2})/g, '<a href="?$1" class="task-due">$1</a>').
