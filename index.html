@@ -112,7 +112,7 @@ var list = new LocalTodoFile("todo")
 list.pull()
 updateDownload()
 list.keys().forEach(function(id) {
-	createTaskElement(id)
+	updateTaskElement(id)
 })
 
 function updateDownload() {
@@ -120,7 +120,7 @@ function updateDownload() {
 }
 
 /* Creates a new task element and returns it, or returns an existing one */
-function createTaskElement(id) {
+function updateTaskElement(id) {
 	if (!list.has(id))
 		return null
 
@@ -161,7 +161,7 @@ document.getElementById("addbutton").onclick = function() {
 	var text = document.getElementById("addtext")
 
 	var id = list.add(text.value)
-	createTaskElement(id)
+	updateTaskElement(id)
 	list.push()
 	updateDownload()
 	
