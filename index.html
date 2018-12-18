@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 	<head>
@@ -78,12 +77,6 @@ main {
 	}
 }
 
-#filter {
-	margin: 16px 0 8px 0;
-	font-size: 14px;
-	font-weight: bold;
-}
-
 		</style>
 	</head>
 	<body>
@@ -103,12 +96,33 @@ main {
 		</main>
 
 		<script>
-function createTaskElement(task) {
-	var out = document.createElement("div")
+var list = new LocalTodoFile
+list.pull()
+updateDownload()
+list.keys().forEach(function(id) {
+	createTaskElement(id)
+})
+
+function updateDownload() {
+	document.getElementById("download").href = "data:text/plain," + encodeURI(list.toString())
+}
+
+/* Creates a new task element and returns it, or returns an existing one */
+function createTaskElement(id) {
+	if (!list.has(id))
+		return null
+
+	var out = document.getElementById("task-" + id)
+	if (out !== null)
+		return out
+
+	out = document.createElement("div")
 	out.classList.add("task")
+	out.id = "task-" + id
 	
 	var text = document.createElement("span")
-	text.innerHTML = task.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").
+	text.classList.add("task-text")
+	text.innerHTML = list.get(id).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").
 		replace(/(\+[\w\d]+)/g, '<a href="?$1" class="task-project">$1</a>').
 		replace(/(\@[\w\d]+)/g, '<a href="?$1" class="task-context">$1</a>').
 		replace(/(due\:\d{4}-\d{2}-\d{2})/g, '<a href="?$1" class="task-due">$1</a>').
@@ -118,26 +132,34 @@ function createTaskElement(task) {
 	var delButton = document.createElement("button")
 	delButton.innerHTML = "&times;"
 	delButton.onclick = function() {
-		deleteTask(this.getAttribute('data-index') | 0)
+		list.delete(id)
+		list.push()
+		updateDownload()
+		out.remove()
 	}
 	delButton.classList.add("circle")
 	out.appendChild(delButton)
 
+	document.getElementById("tasks").appendChild(out)
 	return out
 }
 
 document.getElementById("addbutton").onclick = function() {
 	var text = document.getElementById("addtext")
-	addTask(text.value)
+
+	var id = list.add(text.value)
+	createTaskElement(id)
+	list.push()
+	updateDownload()
+	
 	text.value = ""
 }
 
-var addtext = document.getElementById("addtext");
-addtext.onkeypress = function(e) {
-	if(e.keyCode == 13 || e.which == 13)
+document.getElementById("addtext").onkeypress = function(e) {
+	if (e.which === 13 || e.keyCode === 13) {
 		document.getElementById("addbutton").click()
+	}
 }
-addtext.focus();
-		</script>
+	</script>
 	</body>
 </html>
