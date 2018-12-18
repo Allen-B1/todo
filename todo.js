@@ -62,7 +62,7 @@ var LocalTodoFile = function(name) {
 LocalTodoFile.prototype = Object.create(TodoFile.prototype)
 
 LocalTodoFile.prototype.pull = function() {
-	this.list = String(localStorage.getItem(this.filename)).split("\n")
+	this.list = String(localStorage.getItem(this.filename) || "").split("\n")
 	var self = this
 	this.list.forEach(function(item, index) {
 		if (item.length === 0) {
