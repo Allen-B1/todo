@@ -186,7 +186,9 @@ function updateTaskElement(id) {
 			out.appendChild(createTextElement(list.get(id)))
 		}
 
-		// If backspace, delete
+		// If backspace, delete and focus previous
+		// If up, focus previous
+		// If down or enter, focs next
 		input.onkeypress = function(e) {
 			if ((e.keyCode === 8 || e.which === 8) && input.value === "") {
 				list.delete(id)
@@ -197,9 +199,15 @@ function updateTaskElement(id) {
 					prev.onfocus()
 			}
 
-			if (e.keyCode === 13) {
+			if (e.keyCode === 13 || e.key === "ArrowDown") {
 				if (out.nextSibling !== null && out.nextSibling.onfocus != null) {
 					out.nextSibling.onfocus()
+				}
+			}
+
+			if (e.key === "ArrowUp") {
+				if (out.previousSibling !== null && out.previousSibling.onfocus != null) {
+					out.previousSibling.onfocus()
 				}
 			}
 		}
