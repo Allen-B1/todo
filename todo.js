@@ -16,7 +16,7 @@ TodoList.prototype.get = function(id) {
 }
 
 TodoList.prototype.has = function(id) {
-	return (id - 1) in this.list
+	return typeof this.list[id - 1] === "string" && this.list[id - 1].length !== 0
 }
 
 TodoList.prototype.set = function(id, task) {
@@ -63,12 +63,6 @@ LocalTodoFile.prototype = Object.create(TodoFile.prototype)
 
 LocalTodoFile.prototype.pull = function() {
 	this.list = String(localStorage.getItem(this.filename) || "").split("\n")
-	var self = this
-	this.list.forEach(function(item, index) {
-		if (item.length === 0) {
-			delete self.list[index]
-		}
-	})
 }
 
 LocalTodoFile.prototype.push = function() {

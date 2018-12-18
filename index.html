@@ -32,6 +32,16 @@ body, #addtext {
 .task {
 	padding: 8px 0;
 }
+.task input {
+	padding: 0;
+	margin: 0;
+	border: 0;
+	font: inherit;
+	background: transparent;
+	width: -webkit-fill-available;
+	width: -moz-available;
+	width: fill-available;
+}
 .task button {
 	float: right;
 }
@@ -116,39 +126,77 @@ function updateDownload() {
 	document.getElementById("download").href = "data:text/plain," + encodeURI(list.toString())
 }
 
-/* Creates a new task element and returns it, or returns an existing one */
-function updateTaskElement(id) {
-	if (!list.has(id))
-		return null
-
-	var out = document.getElementById("task-" + id)
-	if (out !== null)
-		return out
-
-	out = document.createElement("div")
-	out.classList.add("task")
-	out.id = "task-" + id
-	
-	var text = document.createElement("span")
-	text.classList.add("task-text")
-	text.innerHTML = list.get(id).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").
+function createTextElement(text) {
+	var out = document.createElement("span")
+	out.classList.add("task-text")
+	out.innerHTML = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").
 		replace(/\(([A-Z])\)/g, '<span class="task-priority task-priority-$1">(<span class="task-priority-actual">$1</span>)</span>').
 		replace(/(\+[\w\d]+)/g, '<a href="?$1" class="task-project">$1</a>').
 		replace(/(\@[\w\d]+)/g, '<a href="?$1" class="task-context">$1</a>').
 		replace(/(due\:\d{4}-\d{2}-\d{2})/g, '<a href="?$1" class="task-due">$1</a>').
 		replace(/([\w\d]+:[\w\d\-]+(?!\w|\d|\-|<|\"))/g, '<a href="?$1" class="task-metadata">$1</a>')
-	out.appendChild(text)
+	return out
 
-	var delButton = document.createElement("button")
-	delButton.innerHTML = "&times;"
-	delButton.onclick = function() {
-		list.delete(id)
-		list.push()
-		updateDownload()
+}
+
+/* Creates a new task element and returns it, or returns an existing one */
+function updateTaskElement(id) {
+	var out = document.getElementById("task-" + id)
+	if (out !== null && !list.has(id)) {
 		out.remove()
+		return null
+	} else if (out !== null) {
+		return out
+	} else if (!list.has(id)) {
+		return null
 	}
-	delButton.classList.add("circle")
-	out.appendChild(delButton)
+
+	out = document.createElement("div")
+	out.classList.add("task")
+	out.id = "task-" + id
+
+	out.appendChild(createTextElement(list.get(id)))
+
+	out.onclick = out.onfocus = function() {
+		if (out.getElementsByTagName("input").length !== 0) {
+			return
+		}
+
+		out.innerHTML = ""
+		
+		var input = document.createElement("input")
+		input.value = list.get(id)
+
+		input.onblur = function() {
+			if (input.value.length === 0) {
+				list.delete(id)
+				list.push()
+				out.remove()
+				return
+			} else {
+				list.set(id, input.value)
+				list.push()
+			}
+			
+			out.innerHTML = ""
+			out.appendChild(createTextElement(list.get(id)))
+		}
+
+		// If backspace, delete
+		input.onkeypress = function(e) {
+			if ((e.keyCode === 8 || e.which === 8) && input.value === "") {
+				list.delete(id)
+				list.push()
+				prev = out.previousSibling
+				out.remove()
+				if (prev.onfocus != null)
+					prev.onfocus()
+			}	
+		}
+		
+		out.appendChild(input)
+		input.focus()
+	}
 
 	document.getElementById("tasks").appendChild(out)
 	return out
