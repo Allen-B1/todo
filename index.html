@@ -195,7 +195,13 @@ function updateTaskElement(id) {
 				out.remove()
 				if (prev.onfocus != null)
 					prev.onfocus()
-			}	
+			}
+
+			if (e.keyCode === 13) {
+				if (out.nextSibling !== null && out.nextSibling.onfocus != null) {
+					out.nextSibling.onfocus()
+				}
+			}
 		}
 		
 		out.appendChild(input)
